@@ -109,7 +109,7 @@ Hashmap<K,V,H>::~Hashmap()
 	    }
 	    this->table[i] = nullptr;
 	}
-	delete this->table;
+	delete[] this->table;
 }
 
 template <class K, class V, class H>
@@ -285,7 +285,7 @@ void Hashmap<K,V,H>::resize()
 	    oldTable[i] = nullptr;
 	}
 
-	delete oldTable;
+	delete[] oldTable;
 }
 
 #endif

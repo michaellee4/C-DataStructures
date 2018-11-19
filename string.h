@@ -43,6 +43,7 @@ string::string(string&& s)
 string::string()
 {
 	this->s_size = 0;
+	this->c_array = new char[1];
 }
 string::string(const char* str)
 {	
@@ -59,7 +60,7 @@ string::string(const char* str)
 }
 string::~string()
 {
-	// delete[] c_array;
+	delete[] c_array;
 }
 char* string::c_str()
 {
@@ -136,8 +137,8 @@ string& string::operator= (const string& str)
 	}
 	tmp[len] = '\0';
 	this->s_size = len;
+	delete[] this->c_array;
 	this->c_array = tmp;
-
 	return *this;
 }
 
