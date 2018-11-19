@@ -2,15 +2,14 @@
 #define HASHMAP_H
 #define MAP_INITIAL_SIZE 101
 
-#if 1
-#ifndef UINT32_T
+// #if 1
+// #ifndef UINT32_T
 typedef unsigned int uint32_t;
-#endif
+// #endif
 
-#ifndef nullptr
-#define nullptr 0
-#endif
-#endif
+// #ifndef nullptr
+// #define nullptr 0
+// #endif
 
 static bool IsPrime(uint32_t number)
 {
@@ -78,7 +77,7 @@ class Hashmap
 	public:
 		Hashmap();
 		~Hashmap();
-		V at(K key) const;
+		V& at(K key) const;
 		bool insert(const K key, const V val);
 		bool erase(const K key);
 		void clear();
@@ -114,7 +113,7 @@ Hashmap<K,V,H>::~Hashmap()
 }
 
 template <class K, class V, class H>
-V Hashmap<K,V,H>::at(K key) const
+V& Hashmap<K,V,H>::at(K key) const
 {
 	uint32_t hashCode = this->hash(key);
 	Hashnode* curNode = this->table[hashCode % this->bucket_count];
@@ -127,7 +126,7 @@ V Hashmap<K,V,H>::at(K key) const
 		curNode = curNode->next;
 	}
 	// should really throw something here
-	return K();
+	return 0;
 }
 
 template <class K, class V, class H>

@@ -4,9 +4,6 @@
 #define INITIAL_VECTOR_CAPACITY 10
 
 
-typedef unsigned long uint32_t;
-
-
 template<class T>
 class vector
 {
@@ -20,7 +17,8 @@ class vector
 		vector();
 		vector(uint32_t initial_size);
 		vector(uint32_t initial_size, T initial_val);
-
+		vector(const vector<T>& cp);
+		vector(vector<T>&& cp);
 		~vector();
 		void reserve(uint32_t capacity);
 		void erase(uint32_t idx);
@@ -36,7 +34,7 @@ class vector
 		T& front() const;
 		T& back() const;
 		T* data() const;
-		T& operator[](const int idx);
+		T& operator[](const int idx) const;
 };
 
 
@@ -69,14 +67,38 @@ vector<T>::vector(uint32_t initial_size, T initial_val)
 }
 
 template<class T>
+vector<T>::vector(const vector<T>& cp)
+{
+	this->v_array = new T[cp.v_capacity]();
+	this->v_size = cp.v_size;
+	this->v_capacity = cp.v_capacity;
+	for(uint32_t i = 0; i < this->v_size; i++)
+	{
+		this->v_array[i] = cp[i];
+	}
+}
+
+template<class T>
+vector<T>::vector(vector<T>&& cp)
+{
+	this->v_array = cp.v_array;
+	this->v_size = cp.v_size;
+	this->v_capacity = cp.v_capacity;
+	cp.v_array = nullptr;
+	cp.v_size = 0;
+	cp.v_capacity = 0;
+}
+
+template<class T>
 vector<T>::~vector()
 {
-	delete[] v_array;
+	delete[] this->v_array;
 }
 
 template<class T>
 void vector<T>::resize(uint32_t capacity)
 {
+	// Debug::printf("*** in vr\n" );
 	T* old_arr = this->v_array;
 	this->v_array = new T[capacity]();
 	this->v_capacity = capacity;
@@ -189,7 +211,7 @@ T* vector<T>::data() const
 }
 
 template<class T>
-T& vector<T>::operator[](const int idx)
+T& vector<T>::operator[](const int idx) const
 {
 	return this->v_array[idx];
 }

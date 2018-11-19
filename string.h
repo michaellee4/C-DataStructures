@@ -1,8 +1,5 @@
 #ifndef STRING_H
 #define STRING_H
-
-#include<iostream>
-typedef unsigned long uint32_t;
 class string
 {
 	private:
@@ -10,6 +7,7 @@ class string
 		uint32_t s_size;
 	public:
 		string(const char* str);
+		string();
 		~string();
 		string substr(uint32_t start, uint32_t len);
 		char& operator[](const uint32_t idx)const;
@@ -21,7 +19,10 @@ class string
 		uint32_t length();
 
 };
-
+string::string()
+{
+	this->s_size = 0;
+}
 string::string(const char* str)
 {	
 	uint32_t len = 0;
@@ -37,7 +38,7 @@ string::string(const char* str)
 }
 string::~string()
 {
-	delete c_array;
+	delete[] c_array;
 }
 char* string::c_str()
 {
@@ -97,24 +98,27 @@ string& string::operator+=(const string& str)
 	}
 	this->s_size += len;
 	this->c_array[this->s_size] = '\0';
+	return *this;
 }
 
 string& string::operator= (const string& str)
 {
-	char* tmp = this->c_array;
 
 	uint32_t len = 0;
 	for(;str[len]!='\0'; len++){}
 
-	this->c_array = new char[len + 1];
+	char* tmp = new char[len + 1];
+
 	for(uint32_t idx = 0; idx < len; idx++)
 	{
-		this->c_array[idx] = str[idx];
+		tmp[idx] = str[idx];
 	}
-	this->c_array[len] = '\0';
+	tmp[len] = '\0';
 	this->s_size = len;
-	delete tmp;
+	delete[] c_array;
+	this->c_array = tmp;
 
+	return *this;
 }
 
 
