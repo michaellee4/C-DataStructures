@@ -2,14 +2,6 @@
 #define HASHMAP_H
 #define MAP_INITIAL_SIZE 101
 
-// #if 1
-// #ifndef UINT32_T
-typedef unsigned int uint32_t;
-// #endif
-
-// #ifndef nullptr
-// #define nullptr 0
-// #endif
 
 static bool IsPrime(uint32_t number)
 {
@@ -39,7 +31,7 @@ static uint32_t NextPrime(uint32_t a)
 template <typename K>
 struct HashCode {
     uint32_t operator()(const K key) const {
-        return reinterpret_cast<int>(key);
+        return reinterpret_cast<int32_t>(key);
     }
 };
 
@@ -78,6 +70,7 @@ class Hashmap
 		Hashmap();
 		~Hashmap();
 		V& at(K key) const;
+		bool find(K key) const;
 		bool insert(const K key, const V val);
 		bool erase(const K key);
 		void clear();
@@ -113,6 +106,22 @@ Hashmap<K,V,H>::~Hashmap()
 }
 
 template <class K, class V, class H>
+bool Hashmap<K,V,H>::find(K key) const
+{
+	uint32_t hashCode = this->hash(key);
+	Hashnode* curNode = this->table[hashCode % this->bucket_count];
+	while(curNode != nullptr)
+	{
+		if(curNode->key == key)
+		{
+			return true;
+		}
+		curNode = curNode->next;
+	}
+	return false;
+}
+
+template <class K, class V, class H>
 V& Hashmap<K,V,H>::at(K key) const
 {
 	uint32_t hashCode = this->hash(key);
@@ -126,7 +135,7 @@ V& Hashmap<K,V,H>::at(K key) const
 		curNode = curNode->next;
 	}
 	// should really throw something here
-	return 0;
+	return curNode->val;
 }
 
 template <class K, class V, class H>
@@ -153,7 +162,7 @@ bool Hashmap<K,V,H>::insert(const K key, const V val)
 	//first element in bucket
 	if (prevNode == nullptr)
 	{
-		Hashnode* curNode = this->table[hashCode % this->bucket_count] = tmpNode;
+		this->table[hashCode % this->bucket_count] = tmpNode;
 	}
 	//append to end
 	else
@@ -230,7 +239,7 @@ uint32_t Hashmap<K,V,H>::getSize() const
 }
 
 template <class K, class V, class H>
-V& Hashmap<K,V,H>::operator[](const K key) 
+V& Hashmap<K,V,H>::operator[](const K key)
 {
 	if(this->size / (float) this->bucket_count > load_limit)
 	{
